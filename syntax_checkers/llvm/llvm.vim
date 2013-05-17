@@ -1,6 +1,7 @@
 "============================================================================
-"File:        macruby.vim
+"File:        llvm.vim
 "Description: Syntax checking plugin for syntastic.vim
+"Maintainer:  Andrew Kelley <superjoe30@gmail.com>
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute
 "             it and/or modify it under the terms of the Do What The Fuck You
@@ -8,31 +9,26 @@
 "             See http://sam.zoy.org/wtfpl/COPYING for more details.
 "
 "============================================================================
-if exists("g:loaded_syntastic_ruby_macruby_checker")
+if exists("g:loaded_syntastic_llvm_llvm_checker")
     finish
 endif
-let g:loaded_syntastic_ruby_macruby_checker=1
+let g:loaded_syntastic_llvm_llvm_checker=1
 
-function! SyntaxCheckers_ruby_macruby_IsAvailable()
-    return executable('macruby')
+function! SyntaxCheckers_llvm_llvm_IsAvailable()
+    return executable("llc")
 endfunction
 
-function! SyntaxCheckers_ruby_macruby_GetLocList()
+function! SyntaxCheckers_llvm_llvm_GetLocList()
     let makeprg = syntastic#makeprg#build({
-                \ 'exe': 'RUBYOPT= macruby',
-                \ 'args': '-W1 -c',
-                \ 'subchecker': 'macruby' })
-    let errorformat =
-        \ '%-GSyntax OK,'.
-        \ '%E%f:%l: syntax error\, %m,'.
-        \ '%Z%p^,'.
-        \ '%W%f:%l: warning: %m,'.
-        \ '%Z%p^,'.
-        \ '%W%f:%l: %m,'.
-        \ '%-C%.%#'
+                \ 'exe': 'llc',
+                \ 'args': syntastic#c#GetNullDevice(),
+                \ 'subchecker': 'llvm' })
+    let errorformat = 'llc: %f:%l:%c: %trror: %m'
+
     return SyntasticMake({ 'makeprg': makeprg, 'errorformat': errorformat })
 endfunction
 
 call g:SyntasticRegistry.CreateAndRegisterChecker({
-    \ 'filetype': 'ruby',
-    \ 'name': 'macruby'})
+    \ 'filetype': 'llvm',
+    \ 'name': 'llvm'})
+
